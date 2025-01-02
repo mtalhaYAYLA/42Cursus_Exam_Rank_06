@@ -1,0 +1,82 @@
+Atama adı : mini_serv
+Beklenen dosyalar : mini_serv.c
+İzin verilen işlevler: write, close, select, socket, accept, listen, send, recv, bind, strstr, malloc, realloc, free, calloc, bzero, atoi, sprintf, strlen, exit, strcpy, strcat, memset
+--------------------------------------------------------------------------------
+
+İstemcinin 127.0.0.1 üzerindeki belirli bir porta bağlanmasını dinleyecek ve istemcilerin birbirleriyle konuşmasına izin verecek bir program yazın
+
+Bu program ilk argüman olarak bağlanılacak portu alacaktır
+Eğer herhangi bir argüman verilmemişse, stderr'ye “Wrong number of arguments” (Yanlış argüman sayısı) yazmalı ve ardından bir \n ve 1 durumuyla çıkmalıdır
+Bir Sistem Çağrısı, program bağlantıyı kabul etmeye başlamadan önce bir hata döndürürse, stderr'a “Fatal error” yazmalı ve ardından bir \n ve durum 1 ile çıkmalıdır
+Bellek ayıramazsanız stderr'ye “Fatal error” yazmalı ve ardından bir \n ve durum 1 ile çıkmalıdır
+
+Programınız bloklama yapmamalı, ancak istemci tembel olabilir ve mesajınızı okumazlarsa bağlantılarını KESMEMELİSİNİZ...
+
+Programınız #define preproc içermemelidir
+Programınız sadece 127.0.0.1 adresini dinlemelidir
+Alacağınız fd, 'recv' veya 'send' komutlarını çağırmadan önce select çağrılmadıysa bunları bloke edecek, aksi takdirde bloke etmeyecek şekilde ayarlanmış olacaktır. 
+
+Bir istemci sunucuya bağlandığında:
+- istemciye bir kimlik verilecektir. ilk istemci 0 kimliğini alacak ve her yeni istemci son istemci kimliğini + 1 alacaktır
+- d bu sayı ile değiştirilecektir
+- sunucuya bağlanan tüm istemcilere bir mesaj gönderilir: “sunucu: istemci %d az önce geldi\n”
+
+istemciler programınıza mesaj gönderebilmelidir.
+- mesaj yalnızca yazdırılabilir karakterler olacaktır, kontrol etmeye gerek yoktur
+- tek bir mesaj birden fazla \n içerebilir
+- Sunucu bir mesaj aldığında, mesajı diğer tüm istemcilere “istemci %d: “ her satırdan önce!
+
+Bir istemci sunucuyla bağlantısını kestiğinde:
+- sunucuya bağlı olan tüm istemcilere bir mesaj gönderilir: “sunucu: istemci %d az önce ayrıldı\n”
+
+Bellek veya fd sızıntıları yasaktır
+
+Size yardımcı olması için, bir sunucunun başlangıcını ve belki bazı yararlı işlevleri içeren main.c dosyasını bulacaksınız. (Bu dosyada yasaklanmış fonksiyonları kullanmaya veya nihai programınızda olmaması gereken şeyleri yazmaya dikkat edin)
+
+Uyarı Test cihazımız mesajları olabildiğince hızlı göndermenizi bekliyor. Gereksiz tamponlama yapmayın.
+
+Değerlendirme normalden biraz daha uzun olabilir...
+
+İpucu: programınızı test etmek için nc kullanabilirsiniz
+İpucu: programınızı test etmek için nc kullanmalısınız
+İpucu: Test etmek için fcntl(fd, F_SETFL, O_NONBLOCK) kullanabilirsiniz ancak select kullanın ve ASLA EAGAIN'i kontrol etmeyin (man 2 send)
+
+-----------// yukarısı deepL ile çevrildi------------------------
+
+
+Sınav Konusu: mini_serv
+
+Dosya adı: mini_serv.cİzin verilen fonksiyonlar: write, close, select, socket, accept, listen, send, recv, bind, strstr, malloc, realloc, free, calloc, bzero, atoi, sprintf, strlen, exit, strcpy, strcat, memset.
+
+Bir program yazmanız gerekiyor. Bu program, 127.0.0.1 adresinde, belirli bir port üzerinde istemci bağlantılarını dinleyecek ve istemcilerin birbirleriyle iletişim kurmasına olanak sağlayacak.
+
+Programın özellikleri:
+
+Port Argümanı: Program, bağlanacağı portu ilk argüman olarak almalı. Eğer argüman verilmezse stderr’e "Wrong number of arguments\n" yazmalı ve exit status 1 ile çıkmalı.
+
+Hata Durumları: Eğer bir sistem çağrısı hata döndürürse ve program bağlantıları kabul etmeye başlamadan önce bu hata oluşur sa stderr’e "Fatal error\n" yazmalı ve exit status 1 ile çıkmalı. Aynı şekilde, bellek ayırma hatalarında da "Fatal error\n" mesajı yazılarak çıkılmalı.
+
+Non-Blocking Çalışma: Program, non-blocking çalışmalı. İstemciler mesajları okumazsa, istemci bağlantısını kesmemeli.
+
+Bağlantı Kısıtlamaları: Program yalnızca 127.0.0.1 adresinde çalışmalı. İstemcilerden gelen recv veya send çağrıları, select fonksiyonu kullanılmadan block etmeyecek şekilde ayarlanmıştır. Ancak, select çağrısı yapılmadan recv veya send çağrısı yapılırsa, program block etmeyecek.
+
+İstemcilerle etkileşim:
+
+Bağlanma Durumu: Bir istemci sunucuya bağlandığında, istemciye bir id atanmalı. İlk bağlanan istemci id 0 alacak. Her yeni istemci, bir önceki istemcinin id’sinin bir fazlasını alacak. Bağlantı sırasında, tüm bağlı istemcilere "server: client %d just arrived\n" mesajı gönderilmeli.
+
+Mesaj Gönderme: İstemciler sunucuya mesaj gönderebilecek. Mesajlar sadece yazdırılabilir karakterlerden oluşacak, doğrulama gerekmeyecek. Tek bir mesaj birden fazla \n içerebilir. Sunucu bir mesaj aldığında, mesaj diğer tüm istemcilere, her satırın başında "client %d: " olacak şekilde iletilmeli.
+
+Bağlantı Kesilme Durumu: Bir istemci bağlantısını kestiğinde, bağlı tüm istemcilere "server: client %d just left\n" mesajı gönderilmeli.
+
+Hafıza ve kaynak yönetimi: Bellek ve dosya tanıtıcı (fd) sızıntıları yasaktır.
+
+Test ipuçları:
+
+nc komutunu kullanarak programınızı test edebilirsiniz.
+
+Non-blocking ayarlarını test etmek için: fcntl(fd, F_SETFL, O_NONBLOCK) kullanabilirsiniz, ancak EAGAIN kontrolü yapmamalısınız (ör. man 2 send'e bakın).
+
+Bu sınavda, bir TCP sunucusunun temel özelliklerini ve istemci bağlantılarını yönetme becerinizi göstermeniz bekleniyor. Tüm adımların belirtilen kurallara uygun şekilde tamamlanması gereklidir.
+
+
+-----------// yukarısı chat GPT ile çevrildi------------------------
